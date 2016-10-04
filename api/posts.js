@@ -1,8 +1,11 @@
 require('dotenv').config();
 var express = require('express');
+var cors = require('cors');
 var connection = require('../modules/newconnect.js');
 var posts = express();
 var pgp = require("pg-promise")(/*options*/);
+
+posts.use(cors());
 
 var conn = {
   host: process.env.DB_HOST,
