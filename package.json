@@ -2,10 +2,9 @@
   "name": "hexercise-server",
   "version": "0.0.1",
   "description": "Home exercise server",
-  "main": "api/posts.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "",
+  "scripts": {},
+  "start": "node api/posts.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
