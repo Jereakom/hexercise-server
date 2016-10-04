@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "description": "Home exercise server",
   "main": "",
-  "scripts": {},
-  "start": "node api/posts.js",
+  "scripts": {"start": "node api/posts.js"},
   "author": "",
   "license": "ISC",
   "dependencies": {
