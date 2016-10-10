@@ -5,7 +5,7 @@ var basename  = path.basename(module.filename);
 var db        = {};
 
 // Initialize sequelize with heroku postgres - the actuall address comes from the DATABASE_URL environment variable
-var sequelize = new Sequelize(process.env.CONN_STRING, {
+var sequelize = new Sequelize(process.env.DATABASE_URL, {
                                     dialect: 'postgres',
                                     protocol: 'postgres',
                                     dialectOptions: {
