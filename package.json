@@ -2,9 +2,9 @@
   "name": "hexercise-server",
   "version": "0.0.1",
   "description": "Home exercise server",
-  "main": "api/posts.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/posts.js"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
