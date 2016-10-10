@@ -157,7 +157,9 @@ app.delete('/users/:id', function (req, res, err){
 
 app.post('/posts', function (req, res, err){
   var tags = req.body.caption.match(/(#\w+)/ig);
-  tags = tags.toString().match(/\w+/ig);
+  if (tags){
+    tags = tags.toString().match(/\w+/ig);
+  }
   models.Post.create({
     UserId: req.body.UserId,
     image: req.body.image,
