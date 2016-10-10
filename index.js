@@ -27,7 +27,7 @@ var storage = cloudinaryStorage({
   cloudinary: cloudinary,
   folder: '',
   allowedFormats: ['jpg', 'png'],
-  public_id: ''
+  public_id: 'test'
 });
 
 var parser = multer({ storage: storage });
