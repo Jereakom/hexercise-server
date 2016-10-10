@@ -33,7 +33,7 @@ var parser = multer({ storage: storage });
 
 app.set('port', config.web.port);
 
-app.post('/upload', parser.single('image'), function (req, res, err) {
+app.post('/upload', parser.single('image'), function (req, res) {
   console.log(req.file);
   res.sendStatus(201);
 });
