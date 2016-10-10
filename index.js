@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var models = require('./models');
 
+// models.sequelize.sync({force: true});
 // models.User.sync({force: true});
 // models.Post.sync({force: true});
 
