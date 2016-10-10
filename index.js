@@ -26,7 +26,8 @@ var models = require('./models');
 var storage = cloudinaryStorage({
   cloudinary: cloudinary,
   folder: '',
-  allowedFormats: ['jpg', 'png']
+  allowedFormats: ['jpg', 'png'],
+  public_id: ''
 });
 
 var parser = multer({ storage: storage });
