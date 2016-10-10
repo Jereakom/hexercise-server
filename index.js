@@ -36,7 +36,7 @@ app.set('port', config.web.port);
 app.post('/upload', parser.single('image'), function (req, res) {
   console.log(req.file);
   console.log(res);
-  res.sendStatus(201);
+  res.send(res.secure_url);
 });
 
 app.post('/register', function(req, res, err) {
