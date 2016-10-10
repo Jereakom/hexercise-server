@@ -230,6 +230,15 @@ app.delete('/users/:UserId/posts/:id', function (req, res, err){
   });
 });
 
+app.get('/', function (req, res){
+  res.send('Hello world');
+});
+
+app.get('*', function (req, res){
+  res.redirect('/');
+});
+
+
 // start listening for incoming HTTP connections
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
