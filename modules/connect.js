@@ -1,16 +1,33 @@
 require('dotenv').config();
-var pg = require('pg');
-
-pg.defaults.ssl = true;
-pg.connect(process.env.DATABASE_URL, function(err, client) {
-  if (err) {
-    done();
-    console.log(err);
-    return ;
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize(process.env.CONN_STRING, {
+  dialectOptions: {
+    ssl:true
   }
-  console.log('Connected to postgres! Doing magic...');
-    client.query('SELECT * FROM users;')
-    .on('row', function(row) {
-      console.log(JSON.stringify(row));
-    });
+});
+sequelize
+  .authenticate()
+  .then(function(err) {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(function (err) {
+    console.log('Unable to connect to the database:', err);
+  });
+
+  var User = sequelize.define('user', {
+  username: {
+    type: Sequelize.STRING
+  },
+  password: {
+    type: Sequelize.STRING
+  }
+});
+
+// force: true will drop the table if it already exists
+User.sync({force: true}).then(function () {
+  // Table created
+  return User.create({
+    username: 'Test',
+    password: 'pwd'
+  });
 });
