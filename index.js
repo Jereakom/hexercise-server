@@ -26,8 +26,7 @@ var models = require('./models');
 var storage = cloudinaryStorage({
   cloudinary: cloudinary,
   folder: '',
-  allowedFormats: ['jpg', 'png'],
-  public_id: 'test'
+  allowedFormats: ['jpg', 'png']
 });
 
 var parser = multer({ storage: storage });
@@ -36,6 +35,7 @@ app.set('port', config.web.port);
 
 app.post('/upload', parser.single('image'), function (req, res) {
   console.log(req.file);
+  console.log(res);
   res.sendStatus(201);
 });
 
