@@ -12,6 +12,10 @@ module.exports = function(sequelize, DataTypes){
       tags: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
+      },
+      comments: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
       }
     }, {
       classMethods: {

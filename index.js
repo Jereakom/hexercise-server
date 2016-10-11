@@ -168,6 +168,8 @@ app.post('/posts', function (req, res, err){
     tags: tags
   }).then(function(response){
     res.json(response);
+  }).catch(function(err){
+    res.json('Could not add post');
   });
 });
 
