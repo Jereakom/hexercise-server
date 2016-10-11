@@ -211,6 +211,76 @@ app.get('/posts/:id', function (req, res, err){
   });
 });
 
+app.post('/comments/:postID/:userID', function (req, res, err){
+  var tempArray = [];
+  var comment = req.body.comment;
+  var user = models.User.findOne({
+    attributes: {
+      exclude: ['password', 'updatedAt', 'createdAt', 'profileImage', 'profileImageThumb']
+    },
+    where: {
+      id: req.params.userID
+    }
+  }).then(function(user){
+    var userObj = user.dataValues;
+    models.Post.findOne({
+      where: {
+        id: req.params.postID
+      }
+    }).then(function(result){
+      tempArray = (result.dataValues.comments);
+      tempArray.push("User: {id: "+userObj.id+", username: "+userObj.username+"}, comment: "+comment);
+    }).then(function(){
+      models.Post.update({
+        comments: tempArray},
+        {
+        where: {
+          id: req.params.postID
+        }}).then(function(post){
+        res.json(post);
+      });
+    });
+  });
+});
+
+app.post('/likes/:postID/:userID', function (req, res, err){
+  var tempArray = [];
+  var user = models.User.findOne({
+    attributes: {
+      exclude: ['password', 'updatedAt', 'createdAt', 'profileImage', 'profileImageThumb']
+    },
+    where: {
+      id: req.params.userID
+    }
+  }).then(function(user){
+    var userObj = user.dataValues;
+    models.Post.findOne({
+      where: {
+        id: req.params.postID
+      }
+    }).then(function(result){
+      tempArray = (result.dataValues.likes);
+      var like = "User: {id: "+userObj.id+", username: "+userObj.username+"}";
+      var index = tempArray.indexOf(like);
+      if (index == -1){
+        tempArray.push("User: {id: "+userObj.id+", username: "+userObj.username+"}");
+      }
+      else{
+        tempArray.splice(index, 1);
+      }
+    }).then(function(){
+      models.Post.update({
+        likes: tempArray},
+        {
+        where: {
+          id: req.params.postID
+        }}).then(function(post){
+        res.json(post);
+      });
+    });
+  });
+});
+
 app.delete('/posts/:id', function (req, res, err){
   models.Post.destroy({
     where: {

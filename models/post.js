@@ -16,6 +16,10 @@ module.exports = function(sequelize, DataTypes){
       comments: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
+      },
+      likes: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        defaultValue: []
       }
     }, {
       classMethods: {
