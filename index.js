@@ -281,6 +281,7 @@ app.post('/likes/:postID/:userID', function (req, res, err){
   });
 });
 
+
 app.delete('/posts/:id', function (req, res, err){
   models.Post.destroy({
     where: {
