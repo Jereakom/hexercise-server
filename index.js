@@ -89,10 +89,6 @@ app.get('/users/:id', function (req, res, err){
       id: req.params.id
     }
   }).then(function(r){
-    if (r === null)
-    {
-      throw err;
-    }
     res.json(r);
   }).catch(function(err){
     res.json('Could not find user');
@@ -103,7 +99,7 @@ app.get('/users/:id/posts', function (req, res, err){
   models.Post.findAll({
     attributes: {
       exclude: ['UserId']
-    },
+    },order: [['id', 'DESC']],
     where: {
       UserId: req.params.id
     }
@@ -180,14 +176,14 @@ app.get('/posts', function (req, res, err){
       attributes:{
         exclude: ['password', 'updatedAt', 'createdAt']
       }
-    }],
+    }], order: [['id', 'DESC']],
     attributes: {
       exclude: ['password', 'updatedAt', 'createdAt', 'UserId']
     }
   }).then(function(results){
     res.json(results);
   }).catch(function(err){
-      res.json('Could not retrieve posts');
+      res.json('Could not find posts');
   });
 });
 
@@ -214,6 +210,12 @@ app.get('/posts/:id', function (req, res, err){
 app.post('/comments/:postID/:userID', function (req, res, err){
   var tempArray = [];
   var comment = req.body.comment;
+
+  var tags = req.body.comment.match(/(#\w+)/ig);
+  if (tags){
+    tags = tags.toString().match(/\w+/ig);
+  }
+
   var user = models.User.findOne({
     attributes: {
       exclude: ['password', 'updatedAt', 'createdAt', 'profileImage', 'profileImageThumb']
@@ -228,8 +230,17 @@ app.post('/comments/:postID/:userID', function (req, res, err){
         id: req.params.postID
       }
     }).then(function(result){
+      // var commentObj = {"User":{id : "+userObj.id+",  username :  "+userObj.username+" },  comment :  "+comment+" }
+      var commentObj = {
+        User: {
+          id: userObj.id,
+          username: userObj.username
+        },
+        comment: comment,
+        tags: tags
+      };
       tempArray = (result.dataValues.comments);
-      tempArray.push("User: {id: "+userObj.id+", username: "+userObj.username+"}, comment: "+comment);
+      tempArray.push(JSON.stringify(commentObj));
     }).then(function(){
       models.Post.update({
         comments: tempArray},
@@ -260,10 +271,16 @@ app.post('/likes/:postID/:userID', function (req, res, err){
       }
     }).then(function(result){
       tempArray = (result.dataValues.likes);
-      var like = "User: {id: "+userObj.id+", username: "+userObj.username+"}";
+      var like = {
+        User: {
+          id: userObj.id,
+          username: userObj.username
+        }
+      };
+      like = JSON.stringify(like);
       var index = tempArray.indexOf(like);
       if (index == -1){
-        tempArray.push("User: {id: "+userObj.id+", username: "+userObj.username+"}");
+        tempArray.push(like);
       }
       else{
         tempArray.splice(index, 1);
