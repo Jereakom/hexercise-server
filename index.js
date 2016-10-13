@@ -248,7 +248,9 @@ app.post('/comments/:postID/:userID', function (req, res, err){
         where: {
           id: req.params.postID
         }}).then(function(post){
-        res.json(post);
+        res.json(post).catch(function(err){
+          res.json("Cannot comment");
+        });
       });
     });
   });
