@@ -230,6 +230,10 @@ app.post('/comments/:postID/:userID', function (req, res, err){
         id: req.params.postID
       }
     }).then(function(result){
+      if (result===null)
+      {
+        throw (err);
+      }
       // var commentObj = {"User":{id : "+userObj.id+",  username :  "+userObj.username+" },  comment :  "+comment+" }
       var commentObj = {
         User: {
@@ -241,7 +245,10 @@ app.post('/comments/:postID/:userID', function (req, res, err){
       };
       tempArray = (result.dataValues.comments);
       tempArray.push(JSON.stringify(commentObj));
-    }).then(function(){
+    }).catch(function(err){
+      throw(err);
+    }).then(function(r){
+      console.log(err);
       models.Post.update({
         comments: tempArray},
         {
@@ -249,9 +256,11 @@ app.post('/comments/:postID/:userID', function (req, res, err){
           id: req.params.postID
         }}).then(function(post){
         res.json(post);
-        }).catch(function(err){
-          res.json("Cannot comment");
+      }).catch(function(err){
+        res.json("Cannot comment on post");
       });
+    }).catch(function(err){
+      res.json("Cannot comment on post");
     });
   });
 });
