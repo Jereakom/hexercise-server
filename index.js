@@ -18,9 +18,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 var models = require('./models');
 
-// models.sequelize.sync({force: true});
 // models.User.sync({force: true});
 // models.Post.sync({force: true});
+// models.Comment.sync({force: true});
+// models.sequelize.sync({force: true});
 
 // Config cloudinary storage for multer-storage-cloudinary
 var storage = cloudinaryStorage({
@@ -126,18 +127,18 @@ app.get('/users/:id/posts/:postId', function (req, res, err){
   });;
 });
 
-app.post('/users', function (req, res, err){
-  models.User.create({
-    username: req.body.username,
-    password: req.body.password,
-    profileImage: req.body.profileImage,
-    profileImageThumb: req.body.profileImage
-  }).then(function(i) {
-    res.json(i);
-  }).catch(function(err){
-    res.send('Cannot create user');
-  });
-});
+// app.post('/users', function (req, res, err){
+//   models.User.create({
+//     username: req.body.username,
+//     password: req.body.password,
+//     profileImage: req.body.profileImage,
+//     profileImageThumb: req.body.profileImage
+//   }).then(function(i) {
+//     res.json(i);
+//   }).catch(function(err){
+//     res.send('Cannot create user');
+//   });
+// });
 
 app.delete('/users/:id', function (req, res, err){
   models.User.destroy({
@@ -175,6 +176,10 @@ app.get('/posts', function (req, res, err){
       model: models.User,
       attributes:{
         exclude: ['password', 'updatedAt', 'createdAt']
+      },
+      model: models.Comment,
+      attributes:{
+        exclude: ['updatedAt', 'createdAt']
       }
     }], order: [['id', 'DESC']],
     attributes: {
@@ -183,6 +188,7 @@ app.get('/posts', function (req, res, err){
   }).then(function(results){
     res.json(results);
   }).catch(function(err){
+      console.log(err);
       res.json('Could not find posts');
   });
 });
@@ -208,61 +214,28 @@ app.get('/posts/:id', function (req, res, err){
 });
 
 app.post('/comments/:postID/:userID', function (req, res, err){
-  var tempArray = [];
-  var comment = req.body.comment;
 
-  var tags = req.body.comment.match(/(#\w+)/ig);
-  if (tags){
-    tags = tags.toString().match(/\w+/ig);
-  }
+    var tempArray = [];
+    var comment = req.body.comment;
 
-  var user = models.User.findOne({
-    attributes: {
-      exclude: ['password', 'updatedAt', 'createdAt', 'profileImage', 'profileImageThumb']
-    },
-    where: {
-      id: req.params.userID
+    var tags = req.body.comment.match(/(#\w+)/ig);
+    if (tags){
+      tags = tags.toString().match(/\w+/ig);
     }
-  }).then(function(user){
-    var userObj = user.dataValues;
-    models.Post.findOne({
-      where: {
-        id: req.params.postID
-      }
-    }).then(function(result){
-      if (result===null)
-      {
-        throw (err);
-      }
-      // var commentObj = {"User":{id : "+userObj.id+",  username :  "+userObj.username+" },  comment :  "+comment+" }
-      var commentObj = {
-        User: {
-          id: userObj.id,
-          username: userObj.username
-        },
-        comment: comment,
-        tags: tags
-      };
-      tempArray = (result.dataValues.comments);
-      tempArray.push(JSON.stringify(commentObj));
-    }).catch(function(err){
-      throw(err);
-    }).then(function(r){
-      console.log(err);
-      models.Post.update({
-        comments: tempArray},
-        {
-        where: {
-          id: req.params.postID
-        }}).then(function(post){
-        res.json(post);
-      }).catch(function(err){
-        res.json("Cannot comment on post");
-      });
-    }).catch(function(err){
-      res.json("Cannot comment on post");
+
+    var comment = models.Comment.build({
+      text: comment,
+      tags: tags,
+      PostId: req.params.postID,
+      UserId: req.params.userID
     });
-  });
+
+    console.log(comment.dataValues);
+    comment.save().then(function(comment){
+      res.json(comment);
+    }).catch(function(err){
+      res.json('Cannot comment on post');
+    });
 });
 
 app.post('/likes/:postID/:userID', function (req, res, err){

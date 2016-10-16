@@ -13,10 +13,6 @@ module.exports = function(sequelize, DataTypes){
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
       },
-      comments: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        defaultValue: []
-      },
       likes: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
@@ -28,6 +24,8 @@ module.exports = function(sequelize, DataTypes){
         Post.belongsTo(models.User, {onDelete:'CASCADE'});
 
         Post.belongsToMany(models.User, {through: 'UserPostLikes', as: 'Likes'});
+
+        Post.hasMany(models.Comment, {onDelete:'CASCADE'});
         }
       }
     });
