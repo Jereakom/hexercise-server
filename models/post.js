@@ -16,6 +16,9 @@ module.exports = function(sequelize, DataTypes){
       likes: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: []
+      },
+      Poster: {
+        type: DataTypes.JSONB()
       }
     }, {
       classMethods: {
@@ -25,7 +28,7 @@ module.exports = function(sequelize, DataTypes){
 
         Post.belongsToMany(models.User, {through: 'UserPostLikes', as: 'Likes'});
 
-        Post.hasMany(models.Comment, {onDelete:'CASCADE'});
+        Post.hasMany(models.Comment);
         }
       }
     });

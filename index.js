@@ -157,35 +157,40 @@ app.post('/posts', function (req, res, err){
   if (tags){
     tags = tags.toString().match(/\w+/ig);
   }
-  models.Post.create({
-    UserId: req.body.UserId,
-    image: req.body.image,
-    imageThumbnail: req.body.image,
-    caption: req.body.caption,
-    tags: tags
-  }).then(function(response){
-    res.json(response);
-  }).catch(function(err){
-    res.json('Could not add post');
+  var user = models.User.findOne({
+    attributes: {
+      exclude: ['password', 'updatedAt', 'createdAt']
+    },
+    where: {
+      id: req.body.UserId
+    }
+  }).then(function(user){
+    console.log(user.dataValues);
+    models.Post.create({
+      Poster: user.dataValues,
+      UserId: req.body.UserId,
+      image: req.body.image,
+      imageThumbnail: req.body.image,
+      caption: req.body.caption,
+      tags: tags
+    }).then(function(response){
+      res.json(response);
+    }).catch(function(err){
+      res.json('Could not add post');
+    });
   });
 });
 
 app.get('/posts', function (req, res, err){
   models.Post.findAll({
     include: [{
-      model: models.User,
-      attributes:{
-        exclude: ['password', 'updatedAt', 'createdAt']
-      },
       model: models.Comment,
-      attributes:{
-        exclude: ['updatedAt', 'createdAt']
-      }
-    }], order: [['id', 'DESC']],
-    attributes: {
-      exclude: ['password', 'updatedAt', 'createdAt', 'UserId']
-    }
-  }).then(function(results){
+      include: [{
+        model: models.User,
+        attributes:{
+          exclude: ['password', 'updatedAt', 'createdAt', 'id', 'profileImage']
+        }
+      }]}], order: [['id', 'DESC']]}).then(function(results){
     res.json(results);
   }).catch(function(err){
       console.log(err);
