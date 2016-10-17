@@ -238,6 +238,22 @@ app.post('/comments/:postID/:userID', function (req, res, err){
     });
 });
 
+app.get('/comments', function (req, res, err){
+  models.Comment.findAll({
+    include: [{
+      model: models.User,
+      attributes:{
+        exclude: ['password', 'updatedAt', 'createdAt']
+      }
+    }],
+    attributes: {
+      exclude: ['password', 'updatedAt', 'createdAt', 'UserId']
+    }
+  }).then(function(comments){
+    res.json(comments);
+  })
+});
+
 app.post('/likes/:postID/:userID', function (req, res, err){
   var tempArray = [];
   var user = models.User.findOne({
