@@ -201,14 +201,14 @@ app.get('/posts', function (req, res, err){
 app.get('/posts/:id', function (req, res, err){
   models.Post.findOne({
     include: [{
-      model: models.User,
-      attributes:{
-        exclude: ['password', 'updatedAt', 'createdAt']
-      }
-    }],
-    attributes: {
-      exclude: ['password', 'updatedAt', 'createdAt', 'UserId']
-    }, where:{
+      model: models.Comment,
+      include: [{
+        model: models.User,
+        attributes:{
+          exclude: ['password', 'updatedAt', 'createdAt', 'id', 'profileImage']
+        }
+      }]}],
+       where:{
       id: req.params.id
     }
   }).then(function(results){
